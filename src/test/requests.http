@@ -1,0 +1,5 @@
+### GET root
+GET http://127.0.0.1:3000/
+
+### POST root
+POST http://127.0.0.1:3000/
