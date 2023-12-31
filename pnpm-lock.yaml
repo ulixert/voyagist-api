@@ -13,6 +13,12 @@ devDependencies:
   '@trivago/prettier-plugin-sort-imports':
     specifier: ^4.3.0
     version: 4.3.0(prettier@3.1.1)
+  '@tsconfig/node-lts':
+    specifier: ^20.1.0
+    version: 20.1.0
+  '@tsconfig/strictest':
+    specifier: ^2.0.2
+    version: 2.0.2
   '@types/express':
     specifier: ^4.17.21
     version: 4.17.21
@@ -503,6 +509,14 @@ packages:
       prettier: 3.1.1
     transitivePeerDependencies:
       - supports-color
+    dev: true
+
+  /@tsconfig/node-lts@20.1.0:
+    resolution: {integrity: sha512-3w2D9MfGdqBL51pHB5nGFmGtXBn1gbO+n9xzwcGSvZPArtCn4tElk+6EeelLXispAeqv13GAgbzkgLNHtoxOCQ==}
+    dev: true
+
+  /@tsconfig/strictest@2.0.2:
+    resolution: {integrity: sha512-jt4jIsWKvUvuY6adJnQJlb/UR7DdjC8CjHI/OaSQruj2yX9/K6+KOvDt/vD6udqos/FUk5Op66CvYT7TBLYO5Q==}
     dev: true
 
   /@types/body-parser@1.19.5:

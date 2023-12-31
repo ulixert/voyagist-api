@@ -10,6 +10,7 @@ module.exports = {
     node: true,
   },
   rules: {
+    '@typescript-eslint/consistent-type-definitions': ['error', 'type'],
     '@typescript-eslint/no-misused-promises': [
       'error',
       {
