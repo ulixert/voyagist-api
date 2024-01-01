@@ -13,5 +13,3 @@ export type Tour = {
   images: string[];
   startDates: string[];
 };
-
-export type CreateTourRequest = Omit<Tour, 'id'>;

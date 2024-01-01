@@ -11,7 +11,9 @@
       "@/db/*": ["db/*"],
       "@/models/*": ["models/*"],
       "@/utils/*": ["utils/*"],
-      "@/types/*": ["types/*"]
+      "@/types/*": ["types/*"],
+      "@/routes/*": ["routes/*"],
+      "@/controllers/*": ["controllers/*"]
     },
 
     /* Linting */
