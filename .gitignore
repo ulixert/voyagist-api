@@ -13,9 +13,7 @@ dist-ssr
 *.local
 *.local.md
 .env
-
-# test
-test
+*.env.json
 
 # Editor directories and files
 .vscode/*
