@@ -29,4 +29,25 @@ Content-Type: application/json
 }
 
 ### Get a single tour
-GET {{api}}/tours/1432
+GET {{api}}/tours/100
+
+### Change the difficulty of tour 1
+PATCH {{api}}/tours/1
+Content-Type: application/json
+
+{
+  "difficulty": "hard"
+}
+
+### Delete the tour
+DELETE {{api}}/tours/1
+
+
+### Create a new tour with invalid body
+POST {{api}}/tours
+Content-Type: application/json
+
+{
+  "name": "Jonas",
+  "price": 12
+}
