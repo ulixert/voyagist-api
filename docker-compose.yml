@@ -1,7 +1,14 @@
 version: '3.9'
 
 services:
-  app:
-    build: .
+  db:
+    image: postgres
+    restart: always
     ports:
-      - "8000:8000"
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=voyagist
+    volumes:
+      - ./data/db:/var/lib/postgresql/data
