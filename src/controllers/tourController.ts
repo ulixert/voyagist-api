@@ -1,44 +1,17 @@
+import { eq } from 'drizzle-orm';
 import { NextFunction, Request, Response } from 'express';
-import { readFileSync } from 'fs';
-import { writeFile } from 'fs/promises';
 
-import { Tour } from '@/types/type.js';
-import { dataPath } from '@/utils/path.js';
+import { db } from '@/db/index.js';
+import { tour } from '@/db/schema.js';
+import { insertTourSchema } from '@/types/schemas.js';
 
+export function checkID(req: Request, res: Response, next: NextFunction) {
+  const id = Number(req.params.id);
 
-// Get data from JSON file
-const tours = JSON.parse(
-  readFileSync(`${dataPath}/tours-simple.json`, 'utf-8'),
-) as Tour[];
-
-export function checkID(
-  _: Request,
-  res: Response,
-  next: NextFunction,
-  val: string,
-) {
-  const id = Number.parseInt(val, 10);
-  const tourExists = tours.some((tour) => tour.id === id);
-
-  if (!tourExists) {
-    res.status(404).json({
-      status: 'fail',
-      message: 'Invalid ID',
-    });
-  }
-
-  next();
-}
-
-export function checkBody(req: Request, res: Response, next: NextFunction) {
-  const isBodyValid =
-    Object.prototype.hasOwnProperty.call(req.body, 'name') &&
-    Object.prototype.hasOwnProperty.call(req.body, 'price');
-
-  if (!isBodyValid) {
+  if (!Number.isInteger(id) || id < 0) {
     res.status(400).json({
       status: 'fail',
-      message: 'Missing name or price',
+      message: 'Invalid ID format',
     });
     return;
   }
@@ -46,23 +19,35 @@ export function checkBody(req: Request, res: Response, next: NextFunction) {
   next();
 }
 
-export const getAllTours = (_: Request, res: Response) => {
-  res.status(200).json({
-    status: 'success',
-    results: tours.length,
-    data: {
-      tours,
-    },
-  });
-};
-
-export const createTour = async (req: Request, res: Response) => {
+export async function getAllTours(_: Request, res: Response) {
   try {
-    const newId = tours.length === 0 ? 1 : tours.at(-1)!.id + 1;
-    const newTour = { ...req.body, id: newId } as Tour;
+    // const tours = await db.query.tour.findMany();
+    const tours = await db.select().from(tour);
+    console.log(tours);
 
-    tours.push(newTour);
-    await writeFile(`${dataPath}/tours-simple.json`, JSON.stringify(tours));
+    res.status(200).json({
+      status: 'success',
+      results: tours.length,
+      data: {
+        tours,
+      },
+    });
+  } catch (e) {
+    if (e instanceof Error) {
+      console.log('💥', e.message);
+      res.status(404).json({
+        status: 'fail',
+        message: e.message,
+      });
+    }
+  }
+}
+
+export async function createTour(req: Request, res: Response) {
+  try {
+    const newTour = insertTourSchema.parse(req.body);
+    await db.insert(tour).values(newTour);
+    console.log('zod');
 
     res.status(201).json({
       status: 'success',
@@ -70,41 +55,94 @@ export const createTour = async (req: Request, res: Response) => {
         tour: newTour,
       },
     });
-  } catch (err) {
-    console.error('💥 There is an error: ', err);
+  } catch (e) {
+    if (e instanceof Error) {
+      console.log('💥', e.message);
+      res.status(400).json({
+        status: 'fail',
+        message: e.message,
+      });
+    }
   }
-};
+}
 
-export function getTour(req: Request, res: Response) {
-  const id = req.params.id;
-  const tour = tours.find((tour) => tour.id === Number(id));
+export async function getTour(req: Request, res: Response) {
+  try {
+    const id = Number(req.params.id);
+    const currentTour = await db.query.tour.findFirst({
+      where: eq(tour.id, id),
+    });
 
-  res.status(200).json({
-    status: 'success',
-    data: {
-      tour,
-    },
-  });
+    if (!currentTour) {
+      throw new Error('Invalid ID');
+    }
+
+    res.status(200).json({
+      status: 'success',
+      data: {
+        tour: currentTour.createdAt,
+      },
+    });
+  } catch (e) {
+    if (e instanceof Error) {
+      console.log('💥', e.message);
+      res.status(404).json({
+        status: 'fail',
+        message: e.message,
+      });
+    }
+  }
 }
 
 export async function updateTour(req: Request, res: Response) {
-  const id = req.params.id;
-  const index = tours.findIndex((tour) => tour.id === Number(id));
+  try {
+    const id = Number(req.params.id);
 
-  tours[index] = { ...tours[index], ...req.body } as Tour;
-  await writeFile(`${dataPath}/tours-simple.json`, JSON.stringify(tours));
+    const updatedTour = insertTourSchema.partial().parse(req.body);
+    console.log(updatedTour);
+    const updateResult = await db
+      .update(tour)
+      .set(updatedTour)
+      .where(eq(tour.id, id))
+      .returning();
 
-  res.status(200).json({
-    status: 'success',
-    data: {
-      tour: tours[index],
-    },
-  });
+    if (updateResult.length === 0) {
+      throw new Error('Tour not found');
+    }
+
+    res.status(200).json({
+      status: 'success',
+      data: {
+        tour: updatedTour,
+      },
+    });
+  } catch (e) {
+    if (e instanceof Error) {
+      console.log('💥', e.message);
+      res.status(404).json({
+        status: 'fail',
+        message: e.message,
+      });
+    }
+  }
 }
 
-export function deleteTour(_: Request, res: Response) {
-  res.status(204).json({
-    status: 'success',
-    data: null,
-  });
+export async function deleteTour(req: Request, res: Response) {
+  try {
+    const id = Number(req.params.id);
+    await db.delete(tour).where(eq(tour.id, id)).returning();
+
+    res.status(204).json({
+      status: 'success',
+      data: null,
+    });
+  } catch (e) {
+    if (e instanceof Error) {
+      console.log('💥', e.message);
+      res.status(404).json({
+        status: 'fail',
+        message: e.message,
+      });
+    }
+  }
 }
