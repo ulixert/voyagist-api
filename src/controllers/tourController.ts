@@ -3,7 +3,11 @@ import { NextFunction, Request, Response } from 'express';
 
 import { db } from '@/db/index.js';
 import { tour } from '@/db/schema.js';
-import { insertTourSchema } from '@/types/schemas.js';
+import {
+  InsertTourSchema,
+  TourQueryStringSchema,
+  UrlQuerySchema,
+} from '@/types/schemas.js';
 
 export function checkID(req: Request, res: Response, next: NextFunction) {
   const id = Number(req.params.id);
@@ -19,11 +23,24 @@ export function checkID(req: Request, res: Response, next: NextFunction) {
   next();
 }
 
-export async function getAllTours(_: Request, res: Response) {
+export async function getAllTours(req: Request, res: Response) {
   try {
-    // const tours = await db.query.tour.findMany();
-    const tours = await db.select().from(tour);
-    console.log(tours);
+    const queryParams = TourQueryStringSchema.merge(UrlQuerySchema).parse(
+      req.query,
+    );
+
+    let query = db.select().from(tour).$dynamic();
+
+    if (queryParams.duration) {
+      query = query.where(eq(tour.duration, queryParams.duration));
+    }
+
+    if (queryParams.difficulty) {
+      query = query.where(eq(tour.difficulty, queryParams.difficulty));
+    }
+
+    console.log(query.toSQL());
+    const tours = await query;
 
     res.status(200).json({
       status: 'success',
@@ -45,7 +62,8 @@ export async function getAllTours(_: Request, res: Response) {
 
 export async function createTour(req: Request, res: Response) {
   try {
-    const newTour = insertTourSchema.parse(req.body);
+    const newTour = InsertTourSchema.parse(req.body);
+    // @ts-expect-error: FIXME - drizzle-kit bug
     await db.insert(tour).values(newTour);
     console.log('zod');
 
@@ -98,10 +116,11 @@ export async function updateTour(req: Request, res: Response) {
   try {
     const id = Number(req.params.id);
 
-    const updatedTour = insertTourSchema.partial().parse(req.body);
+    const updatedTour = InsertTourSchema.partial().parse(req.body);
     console.log(updatedTour);
     const updateResult = await db
       .update(tour)
+      // @ts-expect-error: FIXME - drizzle-kit bug
       .set(updatedTour)
       .where(eq(tour.id, id))
       .returning();

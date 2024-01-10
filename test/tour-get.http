@@ -1,0 +1,5 @@
+### Get all tours
+GET {{api}}/tours
+
+### Get tours with query
+GET {{api}}/tours?duration=5&difficulty=easy

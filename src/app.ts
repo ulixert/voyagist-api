@@ -5,6 +5,7 @@ import { userRouter } from '@/routes/userRoutes.js';
 import { dataPath } from '@/utils/path.js';
 
 export const app: Express = express();
+app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(express.static(`${dataPath}/..`));
 
