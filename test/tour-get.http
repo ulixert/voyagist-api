@@ -2,4 +2,7 @@
 GET {{api}}/tours
 
 ### Get tours with query
-GET {{api}}/tours?duration=5&difficulty=easy
+GET {{api}}/tours?duration=5&difficulty=easy&sort=price&limit=5&page=2&price[max]=1000
+
+### Get tours with price less than 1000
+GET {{api}}/tours?price[max]=1500

@@ -1,4 +1,4 @@
-import { eq } from 'drizzle-orm';
+import { SQLWrapper, and, eq, gte, lte } from 'drizzle-orm';
 import { NextFunction, Request, Response } from 'express';
 
 import { db } from '@/db/index.js';
@@ -28,25 +28,37 @@ export async function getAllTours(req: Request, res: Response) {
     const queryParams = TourQueryStringSchema.merge(UrlQuerySchema).parse(
       req.query,
     );
+    console.log(queryParams);
 
-    let query = db.select().from(tour).$dynamic();
+    const conditions: SQLWrapper[] = [];
 
     if (queryParams.duration) {
-      query = query.where(eq(tour.duration, queryParams.duration));
+      conditions.push(eq(tour.duration, queryParams.duration));
     }
 
     if (queryParams.difficulty) {
-      query = query.where(eq(tour.difficulty, queryParams.difficulty));
+      conditions.push(eq(tour.difficulty, queryParams.difficulty));
     }
 
-    console.log(query.toSQL());
-    const tours = await query;
+    if (queryParams.price) {
+      if (queryParams.price.min) {
+        conditions.push(gte(tour.price, queryParams.price.min));
+      }
+      if (queryParams.price.max) {
+        conditions.push(lte(tour.price, queryParams.price.max));
+      }
+    }
+
+    const tours = await db
+      .select()
+      .from(tour)
+      .where(and(...conditions));
 
     res.status(200).json({
       status: 'success',
       results: tours.length,
       data: {
-        tours,
+        tours: tours.map((tour) => tour.price),
       },
     });
   } catch (e) {
