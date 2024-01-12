@@ -1,18 +1,15 @@
 {
-  "extends": ["@tsconfig/node-lts/tsconfig.json"],
   "compilerOptions": {
-    /* Path */
-    "outDir": "dist",
-    "baseUrl": "src/",
-    "paths": {
-      "@/db/*": ["db/*"],
-      "@/models/*": ["models/*"],
-      "@/utils/*": ["utils/*"],
-      "@/types/*": ["types/*"],
-      "@/routes/*": ["routes/*"],
-      "@/controllers/*": ["controllers/*"]
-    },
+    "lib": ["esNext"],
+    "module": "NodeNext",
+    "target": "ESNext",
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "moduleResolution": "NodeNext",
+    "sourceMap": true,
     /* Linting */
+    "strict": true,
     "noImplicitAny": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
@@ -23,7 +20,18 @@
     "strictBindCallApply": true,
     "noImplicitThis": true,
     "alwaysStrict": true,
-    "declaration": true
+    "declaration": true,
+    /* Paths */
+    "outDir": "dist",
+    "baseUrl": "src/",
+    "paths": {
+      "@/db/*": ["db/*"],
+      "@/models/*": ["models/*"],
+      "@/utils/*": ["utils/*"],
+      "@/types/*": ["types/*"],
+      "@/routes/*": ["routes/*"],
+      "@/controllers/*": ["controllers/*"]
+    }
   },
   "include": ["src"],
   "exclude": ["dist", "node_modules"]

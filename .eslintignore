@@ -4,6 +4,7 @@ cjs
 dist
 public
 dev-data
+prisma
 *.config.ts
 
 .cache
@@ -11,3 +12,5 @@ dev-data
 *.d.ts
 *.js
 tsconfig.json
+
+queryParser.ts

@@ -1,22 +1,36 @@
-import { createInsertSchema, createSelectSchema } from 'drizzle-zod';
 import { z } from 'zod';
 
-import { tour } from '@/db/schema.js';
+import { TourSchema } from '../../prisma/generated/zod/index.js';
 
-export const InsertTourSchema = createInsertSchema(tour);
-export const SelectTourSchema = createSelectSchema(tour);
-export const UrlQuerySchema = z.object({
-  page: z.number().int().positive().optional(),
-  limit: z.number().int().positive().optional(),
+export const QueryParamsSchema = z.object({
+  limit: z.coerce.number().int().positive().optional(),
+  page: z.coerce.number().int().positive().optional(),
   sort: z.string().optional(),
   fields: z.string().optional(),
 });
 
-export const TourQueryStringSchema = z.object({
-  duration: z.coerce.number().positive().optional(),
-  difficulty: z.enum(['easy', 'medium', 'difficult']).optional(),
-  price: z.coerce.number().positive().optional(),
-  maxGroupSize: z.coerce.number().positive().optional(),
-  ratingsAverage: z.coerce.number().positive().optional(),
-  ratingsQuantity: z.coerce.number().positive().optional(),
-});
+function createRangeSchema() {
+  return z
+    .object({
+      gte: z.coerce.number().int().positive().optional(),
+      lte: z.coerce.number().int().positive().optional(),
+      gt: z.coerce.number().int().positive().optional(),
+      lt: z.coerce.number().int().positive().optional(),
+    })
+    .or(z.coerce.number().int().positive())
+    .optional();
+}
+
+export const TourQueryParamsSchema = TourSchema.extend({
+  duration: createRangeSchema(),
+  maxGroupSize: createRangeSchema(),
+  price: createRangeSchema(),
+  ratingsAverage: createRangeSchema(),
+  ratingsQuantity: createRangeSchema(),
+})
+  .partial()
+  .merge(QueryParamsSchema)
+  .omit({
+    images: true,
+    startDates: true,
+  });
