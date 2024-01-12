@@ -1,22 +1,16 @@
-import { createInsertSchema, createSelectSchema } from 'drizzle-zod';
 import { z } from 'zod';
 
-import { tour } from '@/db/schema.js';
-
-export const InsertTourSchema = createInsertSchema(tour);
-export const SelectTourSchema = createSelectSchema(tour);
-export const UrlQuerySchema = z.object({
-  page: z.number().int().positive().optional(),
-  limit: z.number().int().positive().optional(),
+const QueryParamsBaseSchema = z.object({
+  limit: z.coerce.number().int().positive().optional(),
+  page: z.coerce.number().int().positive().optional(),
   sort: z.string().optional(),
   fields: z.string().optional(),
 });
 
-export const TourQueryStringSchema = z.object({
-  duration: z.coerce.number().positive().optional(),
-  difficulty: z.enum(['easy', 'medium', 'difficult']).optional(),
-  price: z.coerce.number().positive().optional(),
-  maxGroupSize: z.coerce.number().positive().optional(),
-  ratingsAverage: z.coerce.number().positive().optional(),
-  ratingsQuantity: z.coerce.number().positive().optional(),
-});
+export const TourQueryParamsSchema = QueryParamsBaseSchema.merge(
+  z.object({
+    difficulty: z.enum(['EASY', 'MEDIUM', 'DIFFICULT']).optional(),
+    duration: z.coerce.number().int().positive().optional(),
+    maxGroupSize: z.coerce.number().int().positive().optional(),
+  }),
+);

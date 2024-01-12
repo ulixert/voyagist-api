@@ -4,6 +4,7 @@ cjs
 dist
 public
 dev-data
+prisma
 *.config.ts
 
 .cache
