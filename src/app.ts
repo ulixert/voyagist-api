@@ -7,6 +7,9 @@ import { dataPath } from '@/utils/path.js';
 import { errorMiddleware } from './middlewares/errorMiddleware.js';
 
 export const app: Express = express();
+
+// app.set('query parser', queryParser);
+
 app.use(express.json());
 app.use(express.static(`${dataPath}/..`));
 

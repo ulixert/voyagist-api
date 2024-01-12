@@ -6,3 +6,9 @@ GET {{api}}/tours/100
 
 ### Get a tour with query params
 GET {{api}}/tours?duration=9&difficulty=EASY
+
+### Get a tour with complex query params
+GET {{api}}/tours?ratingsAverage[gte]=4.5&difficulty=EASY
+
+### Get tours with sorting
+GET {{api}}/tours?fields=id,name,price,createdAt&page=2&sort=-createdAt

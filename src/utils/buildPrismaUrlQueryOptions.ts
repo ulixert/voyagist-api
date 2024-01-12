@@ -29,7 +29,7 @@ export function buildPrismaUrlQueryOptions({
       }
     });
   }
-  const orderBy = orderByOption.length > 0 ? orderByOption : undefined;
+  const orderBy = sort ? orderByOption : undefined;
 
   return {
     select,

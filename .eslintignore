@@ -12,3 +12,5 @@ prisma
 *.d.ts
 *.js
 tsconfig.json
+
+queryParser.ts

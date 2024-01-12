@@ -2,6 +2,7 @@ import { NextFunction, Request, Response } from 'express';
 
 import { prisma } from '@/db/index.js';
 import { TourQueryParamsSchema } from '@/types/schemas.js';
+import { buildPrismaUrlQueryOptions } from '@/utils/buildPrismaUrlQueryOptions.js';
 
 import {
   TourCreateInputSchema,
@@ -30,14 +31,13 @@ export async function getAllTours(
   try {
     const { limit, page, sort, fields, ...queryParams } =
       TourQueryParamsSchema.parse(req.query);
+    const options = { limit, page, sort, fields };
+    const queryOptions = buildPrismaUrlQueryOptions(options);
     const tours = await prisma.tour.findMany({
       where: {
         ...queryParams,
       },
-      select: {
-        duration: true,
-        difficulty: true,
-      },
+      ...queryOptions,
     });
 
     res.status(200).json({
