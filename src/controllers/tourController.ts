@@ -37,22 +37,8 @@ export async function getAllTours(
 ) {
   try {
     const queryParams = TourUrlQuerySchema.parse(req.query);
-    const queryOptions = await buildPrismaUrlQueryOptions(queryParams, 'Tour');
-    // const tours = await prisma.tour.findMany(queryOptions);
-    const tours = await prisma.tour.findMany({
-      ...queryOptions,
-      select: queryOptions.select ?? {
-        id: true,
-        duration: true,
-        price: true,
-        difficulty: true,
-      },
-    });
-
-    // const tours = await prisma.tour.findMany({
-    //   ...queryOptions,
-    //   select: exclude('Tour', ['createdAt', 'description']),
-    // });
+    const queryOptions = buildPrismaUrlQueryOptions(queryParams);
+    const tours = await prisma.tour.findMany(queryOptions);
 
     res.status(200).json({
       status: 'success',
