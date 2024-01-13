@@ -21,7 +21,7 @@ function createRangeSchema() {
     .optional();
 }
 
-export const TourQueryParamsSchema = TourSchema.extend({
+export const TourUrlQuerySchema = TourSchema.extend({
   duration: createRangeSchema(),
   maxGroupSize: createRangeSchema(),
   price: createRangeSchema(),

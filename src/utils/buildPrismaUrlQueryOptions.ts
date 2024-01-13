@@ -3,6 +3,7 @@ type BuildPrismaUrlQueryOptionsProps = {
   limit?: number;
   sort?: string;
   fields?: string;
+  [key: string]: unknown;
 };
 
 export function buildPrismaUrlQueryOptions({
@@ -10,6 +11,7 @@ export function buildPrismaUrlQueryOptions({
   page,
   limit,
   fields,
+  ...where
 }: BuildPrismaUrlQueryOptionsProps) {
   const selectOption: Record<string, boolean> = {};
   if (fields) {
@@ -32,9 +34,10 @@ export function buildPrismaUrlQueryOptions({
   const orderBy = sort ? orderByOption : undefined;
 
   return {
+    where,
     select,
     take,
     skip,
     orderBy,
-  };
+  } as const;
 }
