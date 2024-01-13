@@ -11,22 +11,40 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+generator kysely {
+  provider = "prisma-kysely"
+
+  // Optionally provide a destination directory for the generated file
+  // and a filename of your choice
+  output       = "../src/db"
+  fileName     = "types.ts"
+  // Optionally generate runtime enums to a separate file
+  enumFileName = "enums.ts"
+}
+
 model Tour {
-  id              Int        @id @default(autoincrement())
-  name            String     @unique
+  id              Int         @id @default(autoincrement())
+  name            String      @unique
   duration        Int
   maxGroupSize    Int
   difficulty      Difficulty
-  ratingsAverage  Float      @default(4.5)
-  ratingsQuantity Int        @default(0)
+  ratingsAverage  Float       @default(4.5)
+  ratingsQuantity Int         @default(0)
   price           Int
   priceDiscount   Int?
   summary         String
   description     String?
   imageCover      String
   images          String[]
-  createdAt       DateTime   @default(now())
-  startDates      DateTime[]
+  createdAt       DateTime    @default(now())
+  startDates      StartDate[]
+}
+
+model StartDate {
+  id        Int      @id @default(autoincrement())
+  startDate DateTime
+  tour      Tour     @relation(fields: [tourId], references: [id])
+  tourId    Int
 }
 
 enum Difficulty {

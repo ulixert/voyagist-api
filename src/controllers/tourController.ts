@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from 'express';
+import { sql } from 'kysely';
 
-import { prisma } from '@/db/index.js';
+import { db, prisma } from '@/db/index.js';
 import { TourUrlQuerySchema } from '@/types/schemas.js';
 import { buildPrismaUrlQueryOptions } from '@/utils/buildPrismaUrlQueryOptions.js';
 
@@ -145,6 +146,66 @@ export async function deleteTour(
     res.status(204).json({
       status: 'success',
       data: null,
+    });
+  } catch (e) {
+    next(e);
+  }
+}
+
+export async function getTourStats(
+  _: Request,
+  res: Response,
+  next: NextFunction,
+) {
+  try {
+    const results = await db
+      .selectFrom('Tour')
+      .select([
+        'difficulty',
+        (eb) => eb.fn.avg('ratingsAverage').as('avgRating'),
+        (eb) => eb.fn.avg('price').as('avgPrice'),
+        (eb) => eb.fn.sum('ratingsQuantity').as('sumRatings'),
+        (eb) => eb.fn.max('price').as('maxPrice'),
+      ])
+      .groupBy('difficulty')
+      .having('difficulty', 'in', ['EASY', 'MEDIUM'])
+      .execute();
+
+    res.status(200).json({
+      status: 'success',
+      data: {
+        results,
+      },
+    });
+  } catch (e) {
+    next(e);
+  }
+}
+
+export async function getMonthlyPlan(
+  _: Request,
+  res: Response,
+  next: NextFunction,
+) {
+  try {
+    const results = await db
+      .selectFrom('Tour')
+      .leftJoin('StartDate', 'Tour.id', 'StartDate.tourId')
+      .select([
+        sql`date_part('month', "startDate")`.as('month'),
+        (eb) => eb.fn.countAll().as('count'),
+      ])
+      .where('startDate', '>=', new Date('2021-01-01'))
+      .where('startDate', '<=', new Date('2021-12-31'))
+      .groupBy('month')
+      .orderBy('month')
+      .execute();
+
+    res.status(200).json({
+      status: 'success',
+      data: {
+        results,
+      },
     });
   } catch (e) {
     next(e);

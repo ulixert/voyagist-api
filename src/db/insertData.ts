@@ -1,17 +1,27 @@
-import { readFileSync } from 'fs';
+import * as fs from 'fs';
 
-import { dataPath } from '@/utils/path.js';
+import { dataPath } from '../../src/utils/path.js';
 
-const tours = readFileSync(`${dataPath}/tours-simple.json`, 'utf-8');
+const tours = fs.readFileSync(`${dataPath}/tours-simple.json`, 'utf-8');
 
 for (const tour of JSON.parse(tours)) {
+  const tourWithRelations = {
+    ...tour,
+    startDates: {
+      create: tour.startDates.map((date) => ({ startDate: date })),
+    },
+  };
+
+  console.log(tourWithRelations.startDates);
+
   fetch('http://localhost:8000/api/v1/tours', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify(tour),
+    body: JSON.stringify(tourWithRelations),
   })
-    .then(() => console.log('Data successfully loaded!'))
-    .catch((err) => console.error(err));
+    .then((res) => res.json())
+    .catch();
+  // .catch((err) => console.log(err));
 }

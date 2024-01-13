@@ -6,7 +6,9 @@ import {
   createTour,
   deleteTour,
   getAllTours,
+  getMonthlyPlan,
   getTour,
+  getTourStats,
   updateTour,
 } from '@/controllers/tourController.js';
 
@@ -15,7 +17,9 @@ export const tourRouter: Router = express.Router();
 tourRouter.param('id', checkID);
 
 // alias
-tourRouter.route('/top-5-cheap').get(aliasTopTours, getAllTours);
+tourRouter.get('/top-5-cheap', aliasTopTours, getAllTours);
+tourRouter.get('/stats', getTourStats);
+tourRouter.get('/monthly-plan/:year', getMonthlyPlan);
 
 // tourRouter.route('/').get(getAllTours).post(checkBody, createTour);
 tourRouter.route('/').get(getAllTours).post(createTour);

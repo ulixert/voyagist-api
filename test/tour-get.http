@@ -22,3 +22,9 @@ GET {{api}}/tours?page=8&limit=5
 ### Alias: Get the top 5 ratingsAverage tours, sorted by ratingsAverage and price
 #GET {{api}}/tours?sort=-ratingsAverage,price&limit=5
 GET {{api}}/tours/top-5-cheap
+
+### Get tour stats
+GET {{api}}/tours/stats
+
+### Get monthly plan
+GET {{api}}/tours/monthly-plan/2021
