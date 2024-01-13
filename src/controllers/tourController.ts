@@ -23,6 +23,13 @@ export function checkID(req: Request, res: Response, next: NextFunction) {
   next();
 }
 
+export function aliasTopTours(req: Request, _: Response, next: NextFunction) {
+  req.query.limit = '5';
+  req.query.sort = '-ratingsAverage,price';
+  req.query.fields = 'name,price,ratingsAverage,summary,difficulty';
+  next();
+}
+
 export async function getAllTours(
   req: Request,
   res: Response,
@@ -30,8 +37,22 @@ export async function getAllTours(
 ) {
   try {
     const queryParams = TourUrlQuerySchema.parse(req.query);
-    const queryOptions = buildPrismaUrlQueryOptions(queryParams);
-    const tours = await prisma.tour.findMany(queryOptions);
+    const queryOptions = await buildPrismaUrlQueryOptions(queryParams, 'Tour');
+    // const tours = await prisma.tour.findMany(queryOptions);
+    const tours = await prisma.tour.findMany({
+      ...queryOptions,
+      select: queryOptions.select ?? {
+        id: true,
+        duration: true,
+        price: true,
+        difficulty: true,
+      },
+    });
+
+    // const tours = await prisma.tour.findMany({
+    //   ...queryOptions,
+    //   select: exclude('Tour', ['createdAt', 'description']),
+    // });
 
     res.status(200).json({
       status: 'success',

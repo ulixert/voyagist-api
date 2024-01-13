@@ -2,7 +2,7 @@
 GET {{api}}/tours
 
 ### Get a tour
-GET {{api}}/tours/100
+GET {{api}}/tours/1
 
 ### Get a tour with query params
 GET {{api}}/tours?duration=9&difficulty=EASY
@@ -11,4 +11,14 @@ GET {{api}}/tours?duration=9&difficulty=EASY
 GET {{api}}/tours?duration[gte]=9&difficulty=EASY
 
 ### Get tours with sorting
-GET {{api}}/tours?fields=id,name,price,createdAt&page=2&sort=-createdAt
+GET {{api}}/tours?sort=price,-ratingsAverage
+
+### Get tours with selected fields
+GET {{api}}/tours?fields=id,name,price,createdAt
+
+### Get tours with pagination
+GET {{api}}/tours?page=8&limit=5
+
+### Alias: Get the top 5 ratingsAverage tours, sorted by ratingsAverage and price
+#GET {{api}}/tours?sort=-ratingsAverage,price&limit=5
+GET {{api}}/tours/top-5-cheap
