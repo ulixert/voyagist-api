@@ -1,6 +1,6 @@
 import * as fs from 'fs';
 
-import { dataPath } from '../../src/utils/path.js';
+import { dataPath } from '@/utils/path.js';
 
 const tours = fs.readFileSync(`${dataPath}/tours-simple.json`, 'utf-8');
 
@@ -8,11 +8,9 @@ for (const tour of JSON.parse(tours)) {
   const tourWithRelations = {
     ...tour,
     startDates: {
-      create: tour.startDates.map((date) => ({ startDate: date })),
+      create: tour.startDates.map((date: any) => ({ startDate: date })),
     },
   };
-
-  console.log(tourWithRelations.startDates);
 
   fetch('http://localhost:8000/api/v1/tours', {
     method: 'POST',

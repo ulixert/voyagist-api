@@ -160,16 +160,21 @@ export async function getTourStats(
   try {
     const results = await db
       .selectFrom('Tour')
-      .select([
+      .select((eb) => [
         'difficulty',
-        (eb) => eb.fn.avg('ratingsAverage').as('avgRating'),
-        (eb) => eb.fn.avg('price').as('avgPrice'),
-        (eb) => eb.fn.sum('ratingsQuantity').as('sumRatings'),
-        (eb) => eb.fn.max('price').as('maxPrice'),
+        eb.fn.countAll<number>().as('numTours'),
+        eb.fn.count<number>('ratingsAverage').as('numRatings'),
+        eb.fn.avg('ratingsAverage').as('avgRating'),
+        eb.fn.avg('price').as('avgPrice'),
+        eb.fn.sum('ratingsQuantity').as('sumRatings'),
+        eb.fn.max('price').as('maxPrice'),
       ])
+      .where('ratingsAverage', '>', 4.5)
       .groupBy('difficulty')
       .having('difficulty', 'in', ['EASY', 'MEDIUM'])
       .execute();
+
+    console.log(typeof results[0].numTours);
 
     res.status(200).json({
       status: 'success',
@@ -183,20 +188,22 @@ export async function getTourStats(
 }
 
 export async function getMonthlyPlan(
-  _: Request,
+  req: Request,
   res: Response,
   next: NextFunction,
 ) {
   try {
+    const { year } = req.params;
     const results = await db
       .selectFrom('Tour')
       .leftJoin('StartDate', 'Tour.id', 'StartDate.tourId')
       .select([
         sql`date_part('month', "startDate")`.as('month'),
-        (eb) => eb.fn.countAll().as('count'),
+        (eb) => eb.fn.countAll().as('numTourStarts'),
+        sql`array_agg("name")`.as('tours'),
       ])
-      .where('startDate', '>=', new Date('2021-01-01'))
-      .where('startDate', '<=', new Date('2021-12-31'))
+      .where('startDate', '>=', new Date(`${year}-01-01`))
+      .where('startDate', '<=', new Date(`${year}-12-31`))
       .groupBy('month')
       .orderBy('month')
       .execute();
