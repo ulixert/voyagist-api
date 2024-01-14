@@ -2,7 +2,7 @@ import { NextFunction, Request, Response } from 'express';
 import { sql } from 'kysely';
 
 import { db, prisma } from '@/db/index.js';
-import { TourUrlQuerySchema } from '@/types/schemas.js';
+import { HttpError } from '@/types/errors.js';
 import {
   QueryOptions,
   buildPrismaUrlQueryOptions,
@@ -13,6 +13,7 @@ import {
   TourUpdateInputSchema,
   User,
 } from '../../prisma/generated/zod/index.js';
+import { TourUrlQuerySchema } from '../validates/schemas.js';
 
 export function checkID(req: Request, res: Response, next: NextFunction) {
   const id = Number(req.params.id);
@@ -56,11 +57,11 @@ export async function getAllTours(
 ) {
   try {
     const user = await prisma.user.findUnique({
-      where: { id: 2 },
+      where: { id: 100 },
     });
 
     if (!user) {
-      throw new Error('User not found');
+      throw new HttpError('User not found', 404);
     }
 
     const queryParams = TourUrlQuerySchema.parse(req.query);
