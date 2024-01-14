@@ -8,6 +8,17 @@ type BuildPrismaUrlQueryOptionsProps = {
   [key: string]: unknown;
 };
 
+export type QueryOptions = {
+  readonly take: number;
+  readonly select: Record<string, boolean> | undefined;
+  readonly orderBy: Record<string, string>[] | undefined;
+  readonly where: Omit<
+    BuildPrismaUrlQueryOptionsProps,
+    'limit' | 'sort' | 'page' | 'fields'
+  >;
+  readonly skip: number | undefined;
+};
+
 /**
  * Constructs options for Prisma `findMany` based on URL query parameters.
  * This function takes query parameters from a URL and converts them into a format
@@ -30,9 +41,9 @@ export function buildPrismaUrlQueryOptions<
   { sort, page, limit, fields, ...where }: BuildPrismaUrlQueryOptionsProps,
   modelName?: ModelName,
   omitFields?: FieldName[],
-) {
+): QueryOptions {
   // 'take' defines how many records to return (used for pagination).
-  const take = limit ?? 5;
+  const take = limit ?? 10;
 
   // 'skip' defines how many records to skip (used for pagination).
   const skip = page && limit ? (page - 1) * limit : undefined;

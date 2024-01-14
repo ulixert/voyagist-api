@@ -10,15 +10,15 @@ export const QueryParamsSchema = z.object({
 });
 
 function createRangeSchema() {
-  return z
-    .object({
-      gte: z.coerce.number().int().positive().optional(),
-      lte: z.coerce.number().int().positive().optional(),
-      gt: z.coerce.number().int().positive().optional(),
-      lt: z.coerce.number().int().positive().optional(),
-    })
-    .or(z.coerce.number().int().positive())
-    .optional();
+  return z.union([
+    z.object({
+      gte: z.coerce.number().optional(),
+      lte: z.coerce.number().optional(),
+      gt: z.coerce.number().optional(),
+      lt: z.coerce.number().optional(),
+    }),
+    z.coerce.number(),
+  ]);
 }
 
 export const TourUrlQuerySchema = TourSchema.extend({

@@ -17,7 +17,7 @@ GET {{api}}/tours?sort=price,-ratingsAverage
 GET {{api}}/tours?fields=id,name,price,createdAt
 
 ### Get tours with pagination
-GET {{api}}/tours?page=8&limit=5
+GET {{api}}/tours?page=1&limit=5&ratingsAverage[gte]=7&sort=-ratingsAverage,price
 
 ### Alias: Get the top 5 ratingsAverage tours, sorted by ratingsAverage and price
 #GET {{api}}/tours?sort=-ratingsAverage,price&limit=5

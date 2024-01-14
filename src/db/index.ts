@@ -7,18 +7,8 @@ import { DB } from './types.js';
 
 const { Pool } = pg;
 
-export const prisma = new PrismaClient().$extends({
-  result: {
-    tour: {
-      durationWeeks: {
-        needs: { duration: true },
-        compute(tour) {
-          return tour.duration / 7;
-        },
-      },
-    },
-  },
-});
+// Prisma
+export const prisma = new PrismaClient();
 
 // Kysely
 const dialect = new PostgresDialect({

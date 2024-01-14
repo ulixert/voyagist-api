@@ -1,3 +1,9 @@
+export const Role = {
+    USER: "USER",
+    PREMIUM_USER: "PREMIUM_USER",
+    ADMIN: "ADMIN"
+} as const;
+export type Role = (typeof Role)[keyof typeof Role];
 export const Difficulty = {
     EASY: "EASY",
     MEDIUM: "MEDIUM",

@@ -3,3 +3,14 @@ GET {{api}}/users
 
 ### Get a user
 GET {{api}}/users/0
+
+### Create a user
+POST {{api}}/users
+Content-Type: application/json
+
+{
+  "name": "Rania Chick",
+  "email": "rania@gmail.com",
+  "password": "123456",
+  "role": "PREMIUM_USER"
+}

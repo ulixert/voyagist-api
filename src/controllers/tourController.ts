@@ -3,11 +3,15 @@ import { sql } from 'kysely';
 
 import { db, prisma } from '@/db/index.js';
 import { TourUrlQuerySchema } from '@/types/schemas.js';
-import { buildPrismaUrlQueryOptions } from '@/utils/buildPrismaUrlQueryOptions.js';
+import {
+  QueryOptions,
+  buildPrismaUrlQueryOptions,
+} from '@/utils/buildPrismaUrlQueryOptions.js';
 
 import {
   TourCreateInputSchema,
   TourUpdateInputSchema,
+  User,
 } from '../../prisma/generated/zod/index.js';
 
 export function checkID(req: Request, res: Response, next: NextFunction) {
@@ -31,15 +35,40 @@ export function aliasTopTours(req: Request, _: Response, next: NextFunction) {
   next();
 }
 
+async function findTours(user: User, queryOptions: QueryOptions) {
+  if (user.role === 'PREMIUM_USER' || user.role === 'ADMIN') {
+    return prisma.tour.findMany(queryOptions);
+  } else {
+    return prisma.tour.findMany({
+      ...queryOptions,
+      where: {
+        ...queryOptions.where,
+        isPremium: false,
+      },
+    });
+  }
+}
+
 export async function getAllTours(
   req: Request,
   res: Response,
   next: NextFunction,
 ) {
   try {
+    const user = await prisma.user.findUnique({
+      where: { id: 2 },
+    });
+
+    if (!user) {
+      throw new Error('User not found');
+    }
+
     const queryParams = TourUrlQuerySchema.parse(req.query);
-    const queryOptions = buildPrismaUrlQueryOptions(queryParams);
-    const tours = await prisma.tour.findMany(queryOptions);
+    const queryOptions = buildPrismaUrlQueryOptions(queryParams, 'Tour', [
+      'isPremium',
+      'createdAt',
+    ]);
+    const tours = await findTours(user, queryOptions);
 
     res.status(200).json({
       status: 'success',
@@ -162,6 +191,7 @@ export async function getTourStats(
       .selectFrom('Tour')
       .select((eb) => [
         'difficulty',
+        'isPremium',
         eb.fn.countAll<number>().as('numTours'),
         eb.fn.count<number>('ratingsAverage').as('numRatings'),
         eb.fn.avg('ratingsAverage').as('avgRating'),
@@ -170,7 +200,7 @@ export async function getTourStats(
         eb.fn.max('price').as('maxPrice'),
       ])
       .where('ratingsAverage', '>', 4.5)
-      .groupBy('difficulty')
+      .groupBy(['difficulty', 'isPremium'])
       .having('difficulty', 'in', ['EASY', 'MEDIUM'])
       .execute();
 
@@ -194,12 +224,12 @@ export async function getMonthlyPlan(
 ) {
   try {
     const { year } = req.params;
-    const results = await db
+    const result = await db
       .selectFrom('Tour')
       .leftJoin('StartDate', 'Tour.id', 'StartDate.tourId')
       .select([
         sql`date_part('month', "startDate")`.as('month'),
-        (eb) => eb.fn.countAll().as('numTourStarts'),
+        ({ fn }) => fn.countAll<number>().as('numTourStarts'),
         sql`array_agg("name")`.as('tours'),
       ])
       .where('startDate', '>=', new Date(`${year}-01-01`))
@@ -211,7 +241,7 @@ export async function getMonthlyPlan(
     res.status(200).json({
       status: 'success',
       data: {
-        results,
+        result,
       },
     });
   } catch (e) {
