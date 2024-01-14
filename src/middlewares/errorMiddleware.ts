@@ -4,6 +4,8 @@ import { ZodError } from 'zod';
 import { HttpError } from '@/types/errors.js';
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export const errorMiddleware: ErrorRequestHandler = (err, _, res, __) => {
   if (err instanceof ZodError) {
     console.error('💎Zod Validation Error: ', err);
@@ -20,7 +22,7 @@ export const errorMiddleware: ErrorRequestHandler = (err, _, res, __) => {
   const status = error.status || 'error';
   const message = error.message || 'Internal Server Error';
 
-  console.error('💥', err.stack);
+  console.error('💥', error.stack);
   res.status(statusCode).json({
     status,
     message: `💥Error: ${message}`,
