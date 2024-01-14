@@ -1,0 +1,47 @@
+import type { ColumnType } from "kysely";
+export type Generated<T> = T extends ColumnType<infer S, infer I, infer U>
+  ? ColumnType<S, I | undefined, U>
+  : ColumnType<T, T | undefined, T>;
+export type Timestamp = ColumnType<Date, Date | string, Date | string>;
+
+import type { Role, Difficulty } from "./enums";
+
+export type StartDate = {
+    id: Generated<number>;
+    startDate: Timestamp;
+    tourId: number;
+};
+export type Tour = {
+    id: Generated<number>;
+    name: string;
+    duration: number;
+    maxGroupSize: number;
+    difficulty: Difficulty;
+    /**
+     * @zod.number.min(1).max(5)
+     */
+    ratingsAverage: Generated<number>;
+    ratingsQuantity: Generated<number>;
+    price: number;
+    priceDiscount: number | null;
+    summary: string;
+    description: string | null;
+    imageCover: string;
+    images: string[];
+    createdAt: Generated<Timestamp>;
+    isPremium: Generated<boolean>;
+};
+export type User = {
+    id: Generated<number>;
+    name: string;
+    email: string;
+    password: string;
+    role: Generated<Role>;
+    createdAt: Generated<Timestamp>;
+    updatedAt: Timestamp;
+};
+export type DB = {
+    StartDate: StartDate;
+    Tour: Tour;
+    User: User;
+};

@@ -8,7 +8,26 @@ GET {{api}}/tours/100
 GET {{api}}/tours?duration=9&difficulty=EASY
 
 ### Get a tour with complex query params
-GET {{api}}/tours?ratingsAverage[gte]=4.5&difficulty=EASY
+GET {{api}}/tours?duration[gte]=9&difficulty=EASY
 
 ### Get tours with sorting
-GET {{api}}/tours?fields=id,name,price,createdAt&page=2&sort=-createdAt
+GET {{api}}/tours?sort=price,-ratingsAverage
+
+### Get tours with selected fields
+GET {{api}}/tours?fields=id,name,price,createdAt
+
+### Get tours with pagination
+GET {{api}}/tours?page=1&limit=5&ratingsAverage[gte]=7&sort=-ratingsAverage,price
+
+### Alias: Get the top 5 ratingsAverage tours, sorted by ratingsAverage and price
+#GET {{api}}/tours?sort=-ratingsAverage,price&limit=5
+GET {{api}}/tours/top-5-cheap
+
+### Get tour stats
+GET {{api}}/tours/stats
+
+### Get monthly plan
+GET {{api}}/tours/monthly-plan/2021
+
+### Get wrong route
+GET {{api}}/wrong-route
