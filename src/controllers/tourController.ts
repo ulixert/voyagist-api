@@ -1,13 +1,15 @@
 import type { NextFunction, Request, Response } from 'express';
 import { sql } from 'kysely';
+
+
+import { AppMessage, HttpStatusCode, TourMessage, UserMessage } from '@/constants/constants.js';
 import { db, prisma } from '@/db/index.js';
 import { HttpError, NotFoundError } from '@/errors/errors.js';
-import { type QueryOptions, buildPrismaUrlQueryOptions } from '@/utils/buildPrismaUrlQueryOptions.js';
 import { TourUrlQuerySchema } from '@/validates/schemas.js';
 
 
 import { TourCreateInputSchema, TourUpdateInputSchema, type User } from '../../prisma/generated/zod';
-import { AppMessage, HttpStatusCode, TourMessage, UserMessage } fro '@/constants/constants.js';
+import { type QueryOptions, buildPrismaUrlQueryOptions  from '@/utils/buildPrismaUrlQueryOptions.js';
 
 
 export function checkID(req: Request, _: Response, next: NextFunction) {

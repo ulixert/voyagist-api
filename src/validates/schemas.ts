@@ -16,9 +16,9 @@ function createRangeSchema() {
         gte: z.coerce.number().optional(),
         lte: z.coerce.number().optional(),
         gt: z.coerce.number().optional(),
-        lt: z.coerce.number().optiona(),
+        lt: z.coerce.number().optional(),
       }),
-      z.coerce.numbe(),
+      z.coerce.number(),
     ],
     {
       errorMap: () => ({
