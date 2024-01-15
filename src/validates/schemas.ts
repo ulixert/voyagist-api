@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-import { TourSchema } from '../../prisma/generated/zod/index.js';
+import { TourSchema } from '../../prisma/generated/zod';
 
 export const QueryParamsSchema = z.object({
   limit: z.coerce.number().int().positive().optional(),
@@ -10,15 +10,23 @@ export const QueryParamsSchema = z.object({
 });
 
 function createRangeSchema() {
-  return z.union([
-    z.object({
-      gte: z.coerce.number().optional(),
-      lte: z.coerce.number().optional(),
-      gt: z.coerce.number().optional(),
-      lt: z.coerce.number().optional(),
-    }),
-    z.coerce.number(),
-  ]);
+  return z.union(
+    [
+      z.object({
+        gte: z.coerce.number().optional(),
+        lte: z.coerce.number().optional(),
+        gt: z.coerce.number().optional(),
+        lt: z.coerce.number().optional(),
+      }),
+      z.coerce.number(),
+    ],
+    {
+      errorMap: () => ({
+        message:
+          'Must be a number or an object with one of the following keys: gte, lte, gt, t',
+      }),
+    },
+  );
 }
 
 export const TourUrlQuerySchema = TourSchema.extend({

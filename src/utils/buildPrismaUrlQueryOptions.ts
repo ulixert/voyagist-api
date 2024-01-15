@@ -1,4 +1,4 @@
-import { Entity, Keys, exclude } from './exclude.js';
+import { type Entity, type Keys, exclude } from './exclude.js';
 
 type BuildPrismaUrlQueryOptionsProps = {
   page?: number;

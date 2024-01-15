@@ -5,7 +5,7 @@ GET {{api}}/tours
 GET {{api}}/tours/100
 
 ### Get a tour with query params
-GET {{api}}/tours?duration=9&difficulty=EASY
+GET {{api}}/tours?duration=djs&difficulty=easy
 
 ### Get a tour with complex query params
 GET {{api}}/tours?duration[gte]=9&difficulty=EASY
