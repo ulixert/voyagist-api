@@ -1,16 +1,25 @@
 import type { NextFunction, Request, Response } from 'express';
 import { sql } from 'kysely';
 
-
-import { AppMessage, HttpStatusCode, TourMessage, UserMessage } from '@/constants/constants.js';
+import {
+  AppMessage,
+  HttpStatusCode,
+  TourMessage,
+  UserMessage,
+} from '@/constants/constants.js';
 import { db, prisma } from '@/db/index.js';
 import { HttpError, NotFoundError } from '@/errors/errors.js';
+import {
+  type QueryOptions,
+  buildPrismaUrlQueryOptions,
+} from '@/utils/buildPrismaUrlQueryOptions.js';
 import { TourUrlQuerySchema } from '@/validates/schemas.js';
 
-
-import { TourCreateInputSchema, TourUpdateInputSchema, type User } from '../../prisma/generated/zod';
-import { type QueryOptions, buildPrismaUrlQueryOptions  from '@/utils/buildPrismaUrlQueryOptions.js';
-
+import {
+  TourCreateInputSchema,
+  TourUpdateInputSchema,
+  type User,
+} from '../../prisma/generated/zod';
 
 export function checkID(req: Request, _: Response, next: NextFunction) {
   const id = Number(req.params.id);
@@ -51,7 +60,7 @@ export async function getAllTours(
   try {
     console.log(req.query);
     const user = await prisma.user.findUnique({
-      where: { id: 3 }
+      where: { id: 3 },
     });
 
     if (!user) {
