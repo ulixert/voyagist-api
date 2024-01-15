@@ -10,7 +10,7 @@ Content-Type: application/json
   "duration": 5,
   "maxGroupSize": 25,
   "difficulty": "EASY",
-  "ratingsAverage": 7.7,
+  "ratingsAverage": 4.7,
   "ratingsQuantity": 37,
   "price": 397,
   "summary": "Breathtaking hike through the Canadian Banff National Park",
@@ -41,7 +41,7 @@ Content-Type: application/json
 GET {{api}}/tours/100
 
 ### Update a tour
-PATCH {{api}}/tours/1
+PATCH {{api}}/tours/100
 Content-Type: application/json
 
 {
@@ -49,4 +49,4 @@ Content-Type: application/json
 }
 
 ### Delete a tour
-DELETE {{api}}/tours/1
+DELETE {{api}}/tours/100

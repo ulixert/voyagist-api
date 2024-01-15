@@ -1,8 +1,8 @@
-import { NextFunction, Request, Response } from 'express';
+import type { NextFunction, Request, Response } from 'express';
 
 import { prisma } from '@/db/index.js';
 
-import { UserCreateInputSchema } from '../../prisma/generated/zod/index.js';
+import { UserCreateInputSchema } from '../../prisma/generated/zod';
 
 export async function getAllUsers(
   _: Request,

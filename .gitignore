@@ -14,8 +14,9 @@ drizzle
 dist-ssr
 *.local
 *.local.md
-.env
+*.env
 *.env.json
+insertData.ts
 
 # Editor directories and files
 .vscode/*
