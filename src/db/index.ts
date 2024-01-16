@@ -8,7 +8,22 @@ import type { DB } from './types.js';
 const { Pool } = pg;
 
 // Prisma
-export const prisma = new PrismaClient();
+export const prisma = new PrismaClient().$extends({
+  query: {
+    user: {
+      $allOperations({ args, query }) {
+        return query({
+          ...args,
+          select: {
+            id: true,
+            name: true,
+            email: true,
+          },
+        });
+      },
+    },
+  },
+});
 
 // Kysely
 const dialect = new PostgresDialect({

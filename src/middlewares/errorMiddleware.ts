@@ -47,25 +47,27 @@ function processZodError(err: ZodError): AppError {
   const firstFieldErrorKey = Object.keys(flattenedErrors)[0];
 
   const firstErrorMessage =
-    flattenedErrors[firstFieldErrorKey!]?.[0] ?? err.message;
+    flattenedErrors[firstFieldErrorKey]?.[0] ?? err.message;
 
   return {
     statusCode: HttpStatusCode.BAD_REQUEST,
     status: 'fail',
-    message: `💎 ${firstErrorMessage}`,
+    message: `💎 ${firstFieldErrorKey}: ${firstErrorMessage}`,
     zodErrors: flattenedErrors,
   };
 }
 
 function processPrismaError(err: PrismaClientKnownRequestError): AppError {
+  const message = err.message.split('\n').at(-1);
+
   // A unique constraint was violated on the model
   if (err.code === 'P2002') {
-    const field = (err.meta?.target as string[]).join(', ');
-
+    // const field = (err.meta?.target as string[]).join(', ');
     return {
       statusCode: HttpStatusCode.CONFLICT,
       status: 'fail',
-      message: `⚠️ The value of field ('${field}') is already taken. Please choose another oe.`,
+      // message: `⚠️ The value of field ('${field}') is already taken. Please choose another oe.`,
+      message: `⚠️ ${message}`,
     };
   }
 
@@ -74,7 +76,8 @@ function processPrismaError(err: PrismaClientKnownRequestError): AppError {
     return {
       statusCode: HttpStatusCode.NOT_FOUND,
       status: 'fail',
-      message: `⚠️ ${err.meta?.cause as string}`,
+      // message: `⚠️ ${err.meta?.cause as string}`,
+      message: `⚠️ ${message}`,
     };
   }
 

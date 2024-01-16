@@ -1,0 +1,21 @@
+### Signup a new user
+POST {{api}}/users/signup
+Content-Type: application/json
+
+{
+  "email": "gg@gmail.com",
+  "password": "MwhOj7uLwH1WRIUMHOY",
+  "name": "admin"
+}
+
+### Get user by id
+GET {{api}}/users/2
+
+### login
+POST {{api}}/users/login
+Content-Type: application/json
+
+{
+  "email": "jerry@gail.com",
+  "password": "MwhOj7uLwH1WRIUMHY"
+}

@@ -15,7 +15,8 @@ function generateEntityMessages(entity: string) {
     CREATED: `${entity} created successfully`,
     UPDATED: `${entity} updated successfully`,
     DELETED: `${entity} deleted successfully`,
-  } as const;
+    ALREADY_EXISTS: `${entity} already exists`,
+  };
 }
 
 export const AppMessage = {
@@ -25,4 +26,9 @@ export const AppMessage = {
   NOT_FOUND: 'Not found',
 };
 export const TourMessage = generateEntityMessages('Tour');
-export const UserMessage = generateEntityMessages('User');
+// export const UserMessage = generateEntityMessages('User');
+export const UserMessage = {
+  ...generateEntityMessages('User'),
+  EMAIL_ALREADY_EXISTS: 'Email already exists',
+  INCORRECT_PASSWORD: 'Incorrect email or password',
+} as const;

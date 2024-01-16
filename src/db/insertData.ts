@@ -12,7 +12,7 @@
 //     },
 //   };
 //
-//   fetch('http://localhost:8000/api/v1/tours', {
+//   fetch('http://localhost:3000/api/v1/tours', {
 //     method: 'POST',
 //     headers: {
 //       'Content-Type': 'application/json',

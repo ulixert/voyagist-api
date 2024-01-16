@@ -1,8 +1,8 @@
 import type { NextFunction, Request, Response } from 'express';
 
+import { HttpStatusCode } from '@/constants/constants.js';
 import { prisma } from '@/db/index.js';
-
-import { UserCreateInputSchema } from '../../prisma/generated/zod';
+import { UserCreateInputSchema } from '@/db/zod/index.js';
 
 export async function getAllUsers(
   _: Request,
@@ -36,7 +36,6 @@ export async function createUser(
 
     res.status(201).json({
       status: 'success',
-      message: 'User created successfully',
       data: {
         user,
       },
@@ -46,10 +45,16 @@ export async function createUser(
   }
 }
 
-export function getUser(_: Request, res: Response) {
-  res.status(500).json({
-    status: 'error',
-    message: 'This route is not yet defined!',
+export async function getUser(req: Request, res: Response) {
+  const { id } = req.params;
+  const user = await prisma.user.findUnique({
+    where: { id: Number(id) },
+  });
+  res.status(HttpStatusCode.OK).json({
+    status: 'success',
+    data: {
+      user,
+    },
   });
 }
 
