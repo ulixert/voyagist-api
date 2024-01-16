@@ -30,5 +30,5 @@ export const TourMessage = generateEntityMessages('Tour');
 export const UserMessage = {
   ...generateEntityMessages('User'),
   EMAIL_ALREADY_EXISTS: 'Email already exists',
-  INCORRECT_PASSWORD: 'Incorrect email or password',
+  AUTHENTICATION_FAILED: 'Incorrect email or password',
 } as const;

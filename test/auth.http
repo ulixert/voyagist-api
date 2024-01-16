@@ -16,6 +16,6 @@ POST {{api}}/users/login
 Content-Type: application/json
 
 {
-  "email": "jerry@gail.com",
-  "password": "MwhOj7uLwH1WRIUMHY"
+  "email": "jerry@gmail.com",
+  "password": "MwhOj7uLwH1WRIUMHOY"
 }

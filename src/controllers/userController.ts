@@ -10,7 +10,13 @@ export async function getAllUsers(
   next: NextFunction,
 ) {
   try {
-    const users = await prisma.user.findMany();
+    const users = await prisma.user.findMany({
+      select: {
+        id: true,
+        name: true,
+        email: true,
+      },
+    });
     res.status(200).json({
       status: 'success',
       count: users.length,
@@ -32,6 +38,11 @@ export async function createUser(
     const user = UserCreateInputSchema.parse(req.body);
     await prisma.user.create({
       data: user,
+      select: {
+        id: true,
+        name: true,
+        email: true,
+      },
     });
 
     res.status(201).json({
@@ -49,12 +60,15 @@ export async function getUser(req: Request, res: Response) {
   const { id } = req.params;
   const user = await prisma.user.findUnique({
     where: { id: Number(id) },
+    select: {
+      id: true,
+      name: true,
+      email: true,
+    },
   });
   res.status(HttpStatusCode.OK).json({
     status: 'success',
-    data: {
-      user,
-    },
+    data: { user },
   });
 }
 

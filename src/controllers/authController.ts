@@ -4,6 +4,7 @@ import { HttpStatusCode, UserMessage } from '@/constants/constants.js';
 import { prisma } from '@/db/index.js';
 import { UserCreateInputSchema } from '@/db/zod/index.js';
 import { BadRequestError, UnauthorizedError } from '@/errors/errors.js';
+import { checkPassword } from '@/utils/checkPassword.js';
 import { generateToken } from '@/utils/generateToken.js';
 import { UserLoginSchema } from '@/validates/schemas.js';
 import argon2 from '@node-rs/argon2';
@@ -52,22 +53,12 @@ export async function login(req: Request, res: Response, next: NextFunction) {
   try {
     const { email, password } = UserLoginSchema.parse(req.body);
 
-    // Check if user exists
-    const user = await prisma.user.findUniqueOrThrow({
-      where: { email },
-      select: {
-        id: true,
-        name: true,
-        email: true,
-        password: true,
-      },
-    });
-
-    // Check if password is correct
-    const isPasswordMatches = await argon2.verify(user.password, password);
-    if (!isPasswordMatches) {
-      throw new UnauthorizedError(UserMessage.INCORRECT_PASSWORD);
+    const user = await prisma.user.findUnique({ where: { email } });
+    const isPasswordMatches = await checkPassword(user?.password, password);
+    if (!user || !isPasswordMatches) {
+      throw new UnauthorizedError(UserMessage.AUTHENTICATION_FAILED);
     }
+
     const token = generateToken(user.id);
 
     res.status(HttpStatusCode.OK).json({

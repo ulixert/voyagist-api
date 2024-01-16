@@ -2,7 +2,7 @@
 GET {{api}}/users
 
 ### Get a user
-GET {{api}}/users/0
+GET {{api}}/users/5
 
 ### Create a user
 POST {{api}}/users
