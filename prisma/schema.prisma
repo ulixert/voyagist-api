@@ -44,7 +44,7 @@ model Tour {
 
 model StartDate {
   id        Int      @id @default(autoincrement())
-  tour      Tour     @relation(fields: [tourId], references: [id])
+  tour      Tour     @relation(fields: [tourId], references: [id], onDelete: Cascade)
   tourId    Int
   startDate DateTime
 

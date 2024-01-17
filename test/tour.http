@@ -1,6 +1,20 @@
+### login
+POST {{api}}/users/login
+Content-Type: application/json
+
+{
+  "email": "bruno@gmail.com",
+  "password": "MwhOj7uLwH1WRIUMHOY"
+}
+
+> {%
+  client.global.set("auth_token", response.body.token);
+%}
+
+
 ### Get all tours
 GET {{api}}/tours
-Authorization: Bearer {{token}}
+Authorization: Bearer {{auth_token}}
 #Authorization: Bearer {{token-expired}}
 
 ### Create a tour
@@ -51,4 +65,5 @@ Content-Type: application/json
 }
 
 ### Delete a tour
-DELETE {{api}}/tours/100
+DELETE {{api}}/tours/10
+Authorization: Bearer {{auth_token}}

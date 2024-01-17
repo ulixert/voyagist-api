@@ -4,6 +4,7 @@ export const enum HttpStatusCode {
   NO_CONTENT = 204,
   BAD_REQUEST = 400,
   UNAUTHORIZED = 401,
+  FORBIDDEN = 403,
   NOT_FOUND = 404,
   CONFLICT = 409,
   SERVER_ERROR = 500,
@@ -30,6 +31,7 @@ export const TourMessage = createEntityMessages('Tour');
 export const UserMessage = {
   ...createEntityMessages('User'),
   EMAIL_DUPLICATE_ERROR: 'Email already exists',
+  EMAIL_NOT_FOUND_ERROR: 'There is no user with email address',
   AUTHENTICATION_ERROR: 'Incorrect email or password',
   UNAUTHORIZED_ACCESS_ERROR:
     'You are not logged in! Please log in to get access.',

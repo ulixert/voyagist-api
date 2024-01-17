@@ -3,7 +3,9 @@ import jwt from 'jsonwebtoken';
 
 import { UserMessage } from '@/constants/constants.js';
 import { prisma } from '@/db/index.js';
-import { UnauthorizedError } from '@/errors/errors.js';
+import { RoleType } from '@/db/zod/index.js';
+import { ForbiddenError, UnauthorizedError } from '@/errors/errors.js';
+import { exclude } from '@/utils/exclude.js';
 
 type JwtPayload = {
   id: number;
@@ -33,11 +35,10 @@ function hasPasswordChanged(
     return false;
   }
   const passwordUpdatedAtTimestamp = passwordUpdatedAt.getTime();
-  console.log(jwtIssuedAt * 1000, passwordUpdatedAtTimestamp);
   return jwtIssuedAt * 1000 < passwordUpdatedAtTimestamp;
 }
 
-export async function authMiddleware(
+export async function protectRoute(
   req: Request,
   _: Response,
   next: NextFunction,
@@ -53,7 +54,10 @@ export async function authMiddleware(
     const { id, iat } = await jwtVerify(token, process.env.JWT_SECRET!);
 
     // 3) Check if user still exists
-    const user = await prisma.user.findUnique({ where: { id } });
+    const user = await prisma.user.findUnique({
+      where: { id },
+      select: exclude('User', ['password']),
+    });
     if (!user) {
       throw new UnauthorizedError(
         'The user belonging to this token does no longer exist.',
@@ -72,4 +76,20 @@ export async function authMiddleware(
   } catch (e) {
     next(e);
   }
+}
+
+export function restrictTo(...roles: RoleType[]) {
+  return (req: Request, _: Response, next: NextFunction) => {
+    try {
+      const { role } = req.user!;
+      if (!roles.includes(role)) {
+        throw new ForbiddenError(
+          'You do not have permission to perform this action',
+        );
+      }
+      next();
+    } catch (e) {
+      next(e);
+    }
+  };
 }

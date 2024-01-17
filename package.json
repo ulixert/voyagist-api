@@ -6,7 +6,8 @@
     "dev": "tsx watch --env-file=.env src/server.ts",
     "build": "esbuild src/server.ts --bundle --platform=node --outfile=dist/index.cjs --format=cjs",
     "start": "node --env-file=.prod.env dist/index.cjs",
-    "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0"
+    "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
+    "db:push": "prisma db push"
   },
   "keywords": [],
   "author": "",

@@ -8,6 +8,10 @@ Content-Type: application/json
   "name": "admin"
 }
 
+> {%
+  client.global.set("auth_token", response.body.token);
+%}
+
 ### Get user by id
 GET {{api}}/users/2
 
@@ -19,3 +23,8 @@ Content-Type: application/json
   "email": "admin@gmail.com",
   "password": "MwhOj7uLwH1WRIUMHOY"
 }
+
+> {%
+  client.global.set("auth_token", response.body.token);
+%}
+
