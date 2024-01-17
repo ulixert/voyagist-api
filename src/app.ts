@@ -14,7 +14,6 @@ app.use('/api/v1/tours', tourRouter);
 app.use('/api/v1/users', userRouter);
 
 // Error handling
-
 app.all('*', (req, _, next: NextFunction) => {
   const err = new NotFoundError(`Can't find ${req.originalUrl} on this server`);
   next(err);

@@ -1,7 +1,7 @@
 import type { ErrorRequestHandler, NextFunction } from 'express';
 import { ZodError } from 'zod';
 
-import { AppMessage, HttpStatusCode } from '@/constants/constants.js';
+import { ApplicationMessage, HttpStatusCode } from '@/constants/constants.js';
 import { HttpError } from '@/errors/errors.js';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library.js';
 
@@ -28,6 +28,10 @@ function processError(err: unknown): AppError {
       message: `🌐 ${err.message}`,
     };
   } else if (err instanceof Error) {
+    if (err.name === 'JsonWebTokenError' || err.name === 'TokenExpiredError') {
+      return processJWTError(err);
+    }
+
     return {
       statusCode: HttpStatusCode.SERVER_ERROR,
       status: 'error',
@@ -38,7 +42,7 @@ function processError(err: unknown): AppError {
   return {
     statusCode: HttpStatusCode.SERVER_ERROR,
     status: 'error',
-    message: AppMessage.SERVER_ERROR,
+    message: ApplicationMessage.SERVER_ERROR,
   };
 }
 
@@ -84,7 +88,15 @@ function processPrismaError(err: PrismaClientKnownRequestError): AppError {
   return {
     statusCode: HttpStatusCode.BAD_REQUEST,
     status: 'fail',
-    message: `⚠️ ${AppMessage.DATABASE_ERROR}: ${err.code}`,
+    message: `⚠️ ${ApplicationMessage.DATABASE_ERROR}: ${err.code}`,
+  };
+}
+
+function processJWTError(err: Error): AppError {
+  return {
+    statusCode: HttpStatusCode.UNAUTHORIZED,
+    status: 'fail',
+    message: `🚨 ${err.message}`,
   };
 }
 

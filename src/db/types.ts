@@ -13,8 +13,6 @@ export type Profile = {
     lastName: string | null;
     bio: string | null;
     image: string | null;
-    createdAt: Generated<Timestamp>;
-    updatedAt: Timestamp;
 };
 export type StartDate = {
     id: Generated<number>;
@@ -54,7 +52,7 @@ export type User = {
     password: string;
     role: Generated<Role>;
     createdAt: Generated<Timestamp>;
-    updatedAt: Timestamp;
+    passwordChangedAt: Timestamp | null;
 };
 export type DB = {
     profile: Profile;

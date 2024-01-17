@@ -18,7 +18,7 @@ export async function signup(req: Request, res: Response, next: NextFunction) {
       where: { email },
     });
     if (existingUser) {
-      throw new BadRequestError(UserMessage.EMAIL_ALREADY_EXISTS);
+      throw new BadRequestError(UserMessage.EMAIL_DUPLICATE_ERROR);
     }
 
     // Create user with hashed password
@@ -56,7 +56,7 @@ export async function login(req: Request, res: Response, next: NextFunction) {
     const user = await prisma.user.findUnique({ where: { email } });
     const isPasswordMatches = await checkPassword(user?.password, password);
     if (!user || !isPasswordMatches) {
-      throw new UnauthorizedError(UserMessage.AUTHENTICATION_FAILED);
+      throw new UnauthorizedError(UserMessage.AUTHENTICATION_ERROR);
     }
 
     const token = generateToken(user.id);

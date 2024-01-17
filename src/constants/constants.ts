@@ -9,7 +9,7 @@ export const enum HttpStatusCode {
   SERVER_ERROR = 500,
 }
 
-function generateEntityMessages(entity: string) {
+function createEntityMessages(entity: string) {
   return {
     NOT_FOUND: `${entity} not found`,
     CREATED: `${entity} created successfully`,
@@ -19,16 +19,18 @@ function generateEntityMessages(entity: string) {
   };
 }
 
-export const AppMessage = {
+export const ApplicationMessage = {
   SERVER_ERROR: 'An error occurred on the server. Please try again later.',
   DATABASE_ERROR: 'There was a database error.',
   ID_FORMAT_ERROR: 'ID must be a positive number',
   NOT_FOUND: 'Not found',
 };
-export const TourMessage = generateEntityMessages('Tour');
-// export const UserMessage = generateEntityMessages('User');
+export const TourMessage = createEntityMessages('Tour');
+// export const UserMessage = createEntityMessages('User');
 export const UserMessage = {
-  ...generateEntityMessages('User'),
-  EMAIL_ALREADY_EXISTS: 'Email already exists',
-  AUTHENTICATION_FAILED: 'Incorrect email or password',
+  ...createEntityMessages('User'),
+  EMAIL_DUPLICATE_ERROR: 'Email already exists',
+  AUTHENTICATION_ERROR: 'Incorrect email or password',
+  UNAUTHORIZED_ACCESS_ERROR:
+    'You are not logged in! Please log in to get access.',
 } as const;

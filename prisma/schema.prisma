@@ -52,28 +52,26 @@ model StartDate {
 }
 
 model User {
-  id        Int      @id @default(autoincrement())
-  name      String
-  email     String   @unique /// @zod.string.email()
-  password  String /// @zod.string.min(8).max(20)
-  role      Role     @default(USER)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  profile   Profile?
+  id                Int       @id @default(autoincrement())
+  name              String
+  email             String    @unique /// @zod.string.email()
+  password          String /// @zod.string.min(8).max(20)
+  role              Role      @default(USER)
+  createdAt         DateTime  @default(now())
+  passwordChangedAt DateTime?
+  profile           Profile?
 
   @@map("user")
 }
 
 model Profile {
-  id        Int      @id @default(autoincrement())
-  user      User     @relation(fields: [userId], references: [id])
-  userId    Int      @unique
+  id        Int     @id @default(autoincrement())
+  user      User    @relation(fields: [userId], references: [id])
+  userId    Int     @unique
   firstName String?
   lastName  String?
   bio       String?
   image     String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
 
   @@map("profile")
 }

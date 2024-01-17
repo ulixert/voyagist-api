@@ -1,5 +1,7 @@
 ### Get all tours
 GET {{api}}/tours
+Authorization: Bearer {{token}}
+#Authorization: Bearer {{token-expired}}
 
 ### Create a tour
 POST {{api}}/tours
