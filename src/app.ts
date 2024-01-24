@@ -2,8 +2,9 @@ import express, { type Express, type NextFunction } from 'express';
 
 import { NotFoundError } from '@/errors/errors.js';
 import { errorMiddleware } from '@/middlewares/errorMiddleware.js';
-import { tourRouter } from '@/routes/tourRoutes.js';
-import { userRouter } from '@/routes/userRoutes.js';
+
+import { tourRouter } from './features/tour/tourRoutes.js';
+import { userRouter } from './features/user/userRoutes.js';
 
 export const app: Express = express();
 

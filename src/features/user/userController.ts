@@ -2,7 +2,7 @@ import type { NextFunction, Request, Response } from 'express';
 
 import { HttpStatusCode } from '@/constants/constants.js';
 import { prisma } from '@/db/index.js';
-import { UserCreateInputSchema } from '@/db/zod/index.js';
+import { UserCreateInputSchema, UserPartialSchema } from '@/db/zod/index.js';
 
 export async function getAllUsers(
   _: Request,
@@ -70,6 +70,30 @@ export async function getUser(req: Request, res: Response) {
     status: 'success',
     data: { user },
   });
+}
+
+export async function updateMe(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) {
+  try {
+    const { id } = req.user!;
+    const userData = UserPartialSchema.parse(req.body);
+    const user = await prisma.user.update({
+      where: { id },
+      data: userData,
+    });
+
+    res.status(HttpStatusCode.OK).json({
+      status: 'success',
+      data: {
+        user,
+      },
+    });
+  } catch (e) {
+    next(e);
+  }
 }
 
 export function updateUser(_: Request, res: Response) {

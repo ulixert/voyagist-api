@@ -108,7 +108,7 @@ export const errorMiddleware: ErrorRequestHandler = (
   __: NextFunction,
 ) => {
   const { statusCode, status, message, zodErrors } = processError(err);
-  console.error('💥', zodErrors ?? err);
+  console.error('💥', zodErrors ?? (err as Error).stack);
   const result: Record<string, unknown> = { status, message };
 
   if (process.env.NODE_ENV === 'development' && zodErrors) {

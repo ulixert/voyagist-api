@@ -1,6 +1,14 @@
 ### Get all users
 GET {{api}}/users
 
+### Update me
+PATCH {{api}}/users/update-me
+Authorization: Bearer {{auth_token}}
+Content-Type: application/json
+
+{
+  "name": "Jerry"
+}
 
 ### Get a user
 GET {{api}}/users/5
