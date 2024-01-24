@@ -20,7 +20,7 @@ POST {{api}}/users/login
 Content-Type: application/json
 
 {
-  "email": "admin@gmail.com",
+  "email": "ff@gmail.com",
   "password": "MwhOj7uLwH1WRIUMHOY"
 }
 
@@ -28,3 +28,37 @@ Content-Type: application/json
   client.global.set("auth_token", response.body.token);
 %}
 
+### Forgot password
+POST {{api}}/users/forgot-password
+Content-Type: application/json
+
+{
+  "email": "bruno@gmail.com"
+}
+
+
+### Reset password
+PATCH {{api}}/users/reset-password/48aac9855a4914498b826f385d8b92ff3f0e841d0195da2e3890eb35f1a17c8e
+Content-Type: application/json
+
+{
+  "password": "MwhOj7uLwH1WRIUMHOY"
+}
+
+> {%
+  client.global.set("auth_token", response.body.token);
+%}
+
+### Update password
+PATCH {{api}}/users/update-password
+Authorization: Bearer {{auth_token}}
+Content-Type: application/json
+
+{
+  "currentPassword": "MwhOj7uLwH1WRIUMHOY",
+  "newPassword": "12345678"
+}
+
+> {%
+  client.global.set("auth_token", response.body.token);
+%}

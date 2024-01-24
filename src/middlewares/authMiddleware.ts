@@ -35,7 +35,9 @@ function hasPasswordChanged(
     return false;
   }
   const passwordUpdatedAtTimestamp = passwordUpdatedAt.getTime();
-  return jwtIssuedAt * 1000 < passwordUpdatedAtTimestamp;
+  // jwtIssuedAt is in seconds, passwordUpdatedAtTimestamp is in milliseconds
+  // jwtIssuedAt is rounded down, passwordUpdatedAtTimestamp is rounded up, so here need to add 1 to jwtIssuedAt
+  return (jwtIssuedAt + 1) * 1000 < passwordUpdatedAtTimestamp;
 }
 
 export async function protectRoute(

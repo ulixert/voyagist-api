@@ -35,4 +35,6 @@ export const UserMessage = {
   AUTHENTICATION_ERROR: 'Incorrect email or password',
   UNAUTHORIZED_ACCESS_ERROR:
     'You are not logged in! Please log in to get access.',
+  INVALID_TOKEN_ERROR: 'Token is invalid or has expired! Please log in again.',
+  INVALID_PASSWORD: 'Incorrect password',
 } as const;
