@@ -14,7 +14,6 @@ export async function getAllUsers(
 ) {
   try {
     const users = await prisma.user.findMany({
-      where: { active: true },
       select: {
         id: true,
         name: true,
@@ -122,7 +121,7 @@ export async function deleteCurrentUser(
 
     await prisma.user.update({
       where: { id },
-      data: { active: false },
+      data: { deleted: true },
     });
 
     res.status(HttpStatusCode.NO_CONTENT).send();

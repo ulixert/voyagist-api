@@ -6,7 +6,7 @@ export const softDelete = Prisma.defineExtension({
     user: {
       $allOperations({ query, args, operation }) {
         if (operation !== 'create' && operation !== 'createMany') {
-          args.where = { ...args.where, active: true };
+          args.where = { ...args.where, deleted: false };
         }
 
         return query(args);

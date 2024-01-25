@@ -62,7 +62,7 @@ model User {
   profile            Profile?
   resetPasswordToken String?
   resetPasswordExp   DateTime?
-  active             Boolean   @default(true)
+  deleted            Boolean   @default(false)
 
   @@map("user")
 }

@@ -1,7 +1,7 @@
 import { Kysely, PostgresDialect } from 'kysely';
 import pg from 'pg';
 
-import { softDelete } from '@/extensions/softDelete.js';
+import { softDelete } from '@/db/extensions/softDelete.js';
 import { PrismaClient } from '@prisma/client';
 
 import type { DB } from './types.js';
