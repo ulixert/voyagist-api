@@ -62,6 +62,7 @@ model User {
   profile            Profile?
   resetPasswordToken String?
   resetPasswordExp   DateTime?
+  active             Boolean   @default(true)
 
   @@map("user")
 }

@@ -3,12 +3,14 @@ import type { NextFunction, Request, Response } from 'express';
 
 import { HttpStatusCode, UserMessage } from '@/constants/constants.js';
 import { prisma } from '@/db/index.js';
-import { UserCreateInputSchema, UserPartial } from '@/db/zod/index.js';
+import { UserCreateInputSchema } from '@/db/zod/index.js';
 import {
   BadRequestError,
   NotFoundError,
   UnauthorizedError,
 } from '@/errors/errors.js';
+import { generateToken } from '@/features/auth/utils/generateToken.js';
+import { prepareUserResponse } from '@/features/user/utils/prepareUserResponse.js';
 import { sendPasswordResetEmail } from '@/utils/email.js';
 import {
   UserEmailSchema,
@@ -19,23 +21,6 @@ import {
 import argon2 from '@node-rs/argon2';
 
 import { checkPassword } from './utils/checkPassword.js';
-import { generateToken } from './utils/generateToken.js';
-
-function generateSendTokenResponse(
-  user: UserPartial,
-  statusCode: HttpStatusCode,
-  res: Response,
-) {
-  const token = generateToken(user.id!);
-
-  res.status(statusCode).json({
-    status: 'success',
-    token,
-    data: {
-      user,
-    },
-  });
-}
 
 export async function signup(req: Request, res: Response, next: NextFunction) {
   try {
@@ -57,14 +42,16 @@ export async function signup(req: Request, res: Response, next: NextFunction) {
         email,
         password: hashedPassword,
       },
-      select: {
-        id: true,
-        name: true,
-        email: true,
-      },
     });
 
-    generateSendTokenResponse(user, HttpStatusCode.CREATED, res);
+    const token = generateToken(user.id);
+    res.status(HttpStatusCode.CREATED).json({
+      status: 'success',
+      token,
+      data: {
+        user: prepareUserResponse(user),
+      },
+    });
   } catch (e) {
     next(e);
   }
@@ -80,7 +67,14 @@ export async function login(req: Request, res: Response, next: NextFunction) {
       throw new UnauthorizedError(UserMessage.AUTHENTICATION_ERROR);
     }
 
-    generateSendTokenResponse(user, HttpStatusCode.OK, res);
+    const token = generateToken(user.id);
+    res.status(HttpStatusCode.OK).json({
+      status: 'success',
+      token,
+      data: {
+        user: prepareUserResponse(user),
+      },
+    });
   } catch (e) {
     next(e);
   }
@@ -161,7 +155,12 @@ export async function resetPassword(
       },
     });
 
-    generateSendTokenResponse(user, HttpStatusCode.OK, res);
+    const token = generateToken(user.id);
+    res.status(HttpStatusCode.OK).json({
+      status: 'success',
+      token,
+      message: 'Password reset successfully!',
+    });
   } catch (e) {
     next(e);
   }
@@ -173,12 +172,11 @@ export async function updatePassword(
   next: NextFunction,
 ) {
   try {
-    const { id } = req.user!;
+    const user = req.user!;
     const { currentPassword, newPassword } = UserUpdatePasswordSchema.parse(
       req.body,
     );
 
-    const user = await prisma.user.findUnique({ where: { id } });
     const isPasswordMatch = await checkPassword(
       user?.password,
       currentPassword,
@@ -189,14 +187,19 @@ export async function updatePassword(
 
     const hashedPassword = await argon2.hash(newPassword);
     await prisma.user.update({
-      where: { id },
+      where: { id: user.id },
       data: {
         password: hashedPassword,
         passwordChangedAt: new Date(),
       },
     });
 
-    generateSendTokenResponse(user!, HttpStatusCode.OK, res);
+    const token = generateToken(user.id);
+    res.status(HttpStatusCode.OK).json({
+      status: 'success',
+      token,
+      message: 'Password updated successfully!',
+    });
   } catch (e) {
     next(e);
   }

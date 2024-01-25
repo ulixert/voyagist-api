@@ -3,6 +3,9 @@ import type { NextFunction, Request, Response } from 'express';
 import { HttpStatusCode } from '@/constants/constants.js';
 import { prisma } from '@/db/index.js';
 import { UserCreateInputSchema, UserPartialSchema } from '@/db/zod/index.js';
+import { BadRequestError } from '@/errors/errors.js';
+import { prepareUserResponse } from '@/features/user/utils/prepareUserResponse.js';
+import { filterByAllowedFields } from '@/utils/filterByAllowedFields.js';
 
 export async function getAllUsers(
   _: Request,
@@ -11,6 +14,7 @@ export async function getAllUsers(
 ) {
   try {
     const users = await prisma.user.findMany({
+      where: { active: true },
       select: {
         id: true,
         name: true,
@@ -72,25 +76,56 @@ export async function getUser(req: Request, res: Response) {
   });
 }
 
-export async function updateMe(
+export async function updateCurrentUser(
   req: Request,
   res: Response,
   next: NextFunction,
 ) {
   try {
     const { id } = req.user!;
-    const userData = UserPartialSchema.parse(req.body);
-    const user = await prisma.user.update({
+    const updatedUserData = UserPartialSchema.parse(req.body);
+
+    // Prevent user from updating password
+    if (updatedUserData.password) {
+      throw new BadRequestError(
+        'This route is not for password updates. Please use /updateMyPassword.',
+      );
+    }
+    const filteredUserData = filterByAllowedFields(
+      updatedUserData,
+      'name',
+      'email',
+    );
+    const updatedUser = await prisma.user.update({
       where: { id },
-      data: userData,
+      data: filteredUserData,
     });
 
     res.status(HttpStatusCode.OK).json({
       status: 'success',
       data: {
-        user,
+        user: prepareUserResponse(updatedUser),
       },
     });
+  } catch (e) {
+    next(e);
+  }
+}
+
+export async function deleteCurrentUser(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) {
+  try {
+    const { id } = req.user!;
+
+    await prisma.user.update({
+      where: { id },
+      data: { active: false },
+    });
+
+    res.status(HttpStatusCode.NO_CONTENT).send();
   } catch (e) {
     next(e);
   }
