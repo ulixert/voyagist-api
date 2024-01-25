@@ -24,8 +24,9 @@ export async function getAllTours(
   next: NextFunction,
 ) {
   try {
+    console.log(req.query);
     const queryParams = TourUrlQuerySchema.parse(req.query);
-
+    console.log(queryParams);
     const queryOptions = buildPrismaUrlQueryOptions(queryParams, 'Tour', [
       'isPremium',
       'createdAt',
