@@ -2,15 +2,24 @@ import type { ColumnType } from 'kysely';
 
 import type { Difficulty, Role } from './enums.js';
 
-export type Generated<T> = T extends ColumnType<infer S, infer I, infer U>
-  ? ColumnType<S, I | undefined, U>
-  : ColumnType<T, T | undefined, T>;
+export type Generated<T> =
+  T extends ColumnType<infer S, infer I, infer U>
+    ? ColumnType<S, I | undefined, U>
+    : ColumnType<T, T | undefined, T>;
 export type Timestamp = ColumnType<Date, Date | string, Date | string>;
 
+export type Profile = {
+  id: Generated<number>;
+  userId: number;
+  firstName: string | null;
+  lastName: string | null;
+  bio: string | null;
+  image: string | null;
+};
 export type StartDate = {
   id: Generated<number>;
-  startDate: Timestamp;
   tourId: number;
+  startDate: Timestamp;
 };
 export type Tour = {
   id: Generated<number>;
@@ -35,14 +44,24 @@ export type Tour = {
 export type User = {
   id: Generated<number>;
   name: string;
+  /**
+   * @zod.string.email()
+   */
   email: string;
+  /**
+   * @zod.string.min(8).max(20)
+   */
   password: string;
   role: Generated<Role>;
   createdAt: Generated<Timestamp>;
-  updatedAt: Timestamp;
+  passwordChangedAt: Timestamp | null;
+  resetPasswordToken: string | null;
+  resetPasswordExp: Timestamp | null;
+  deleted: Generated<boolean>;
 };
 export type DB = {
-  StartDate: StartDate;
-  Tour: Tour;
-  User: User;
+  profile: Profile;
+  start_date: StartDate;
+  tour: Tour;
+  user: User;
 };

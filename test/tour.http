@@ -1,5 +1,21 @@
+### login
+POST {{api}}/users/login
+Content-Type: application/json
+
+{
+  "email": "bruno@gmail.com",
+  "password": "MwhOj7uLwH1WRIUMHOY"
+}
+
+> {%
+  client.global.set("auth_token", response.body.token);
+%}
+
+
 ### Get all tours
 GET {{api}}/tours
+Authorization: Bearer {{auth_token}}
+#Authorization: Bearer {{token-expired}}
 
 ### Create a tour
 POST {{api}}/tours
@@ -24,13 +40,13 @@ Content-Type: application/json
   "startDates": {
     "create": [
       {
-        "startDate": "2021-04-25T09:00:00.000Z"
+        "startDate": "2021-12-16T09:00:00.000Z"
       },
       {
-        "startDate": "2021-07-20T09:00:00.000Z"
+        "startDate": "2022-01-16T09:00:00.000Z"
       },
       {
-        "startDate": "2021-10-05T09:00:00.000Z"
+        "startDate": "2022-12-16T09:00:00.000Z"
       }
     ]
   }
@@ -49,4 +65,5 @@ Content-Type: application/json
 }
 
 ### Delete a tour
-DELETE {{api}}/tours/100
+DELETE {{api}}/tours/10
+Authorization: Bearer {{auth_token}}

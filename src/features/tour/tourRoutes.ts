@@ -1,8 +1,10 @@
 import express, { Router } from 'express';
 
+import { checkID } from '@/middlewares/checkID.js';
+
+import { protectRoute, restrictTo } from '../auth/authMiddleware.js';
 import {
   aliasTopTours,
-  checkID,
   createTour,
   deleteTour,
   getAllTours,
@@ -10,7 +12,7 @@ import {
   getTour,
   getTourStats,
   updateTour,
-} from '@/controllers/tourController.js';
+} from './tourController.js';
 
 export const tourRouter: Router = express.Router();
 
@@ -21,5 +23,9 @@ tourRouter.get('/top-5-cheap', aliasTopTours, getAllTours);
 tourRouter.get('/stats', getTourStats);
 tourRouter.get('/monthly-plan/:year', getMonthlyPlan);
 
-tourRouter.route('/').get(getAllTours).post(createTour);
-tourRouter.route('/:id').get(getTour).patch(updateTour).delete(deleteTour);
+tourRouter.route('/').get(protectRoute, getAllTours).post(createTour);
+tourRouter
+  .route('/:id')
+  .get(getTour)
+  .patch(updateTour)
+  .delete(protectRoute, restrictTo('ADMIN'), deleteTour);

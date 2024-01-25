@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-import { TourSchema } from '../../prisma/generated/zod';
+import { TourSchema, UserSchema } from '@/db/zod/index.js';
 
 export const QueryParamsSchema = z.object({
   limit: z.coerce.number().int().positive().optional(),
@@ -41,3 +41,21 @@ export const TourUrlQuerySchema = TourSchema.extend({
   .omit({
     images: true,
   });
+
+export const UserLoginSchema = UserSchema.pick({
+  email: true,
+  password: true,
+});
+
+export const UserEmailSchema = UserSchema.pick({
+  email: true,
+});
+
+export const UserPasswordSchema = UserSchema.pick({
+  password: true,
+});
+
+export const UserUpdatePasswordSchema = z.object({
+  currentPassword: z.string().min(8).max(20),
+  newPassword: z.string().min(8).max(20),
+});

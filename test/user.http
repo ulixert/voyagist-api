@@ -1,8 +1,38 @@
+### login
+POST {{api}}/users/login
+Content-Type: application/json
+
+{
+  "email": "alice@gmail.com",
+  "password": "12345678"
+}
+
+> {%
+  client.global.set("auth_token", response.body.token);
+%}
+
+
 ### Get all users
 GET {{api}}/users
 
+
+### Update me
+PATCH {{api}}/users/update-me
+Authorization: Bearer {{auth_token}}
+Content-Type: application/json
+
+{
+  "name": "James",
+  "role": "PREMIUM_USER"
+}
+
+### Delete current user
+DELETE {{api}}/users/delete-me
+Authorization: Bearer {{auth_token}}
+
+
 ### Get a user
-GET {{api}}/users/0
+GET {{api}}/users/5
 
 ### Create a user
 POST {{api}}/users
@@ -14,3 +44,4 @@ Content-Type: application/json
   "password": "123456",
   "role": "PREMIUM_USER"
 }
+
