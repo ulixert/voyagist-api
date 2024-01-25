@@ -18,7 +18,6 @@ GET {{api}}/users
 
 ### Update me
 PATCH {{api}}/users/update-me
-Authorization: Bearer {{auth_token}}
 Content-Type: application/json
 
 {

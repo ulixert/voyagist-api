@@ -3,9 +3,9 @@ POST {{api}}/users/signup
 Content-Type: application/json
 
 {
-  "email": "ff@gmail.com",
-  "password": "MwhOj7uLwH1WRIUMHOY",
-  "name": "admin"
+  "email": "user@gmail.com",
+  "password": "12345678",
+  "name": "user"
 }
 
 > {%

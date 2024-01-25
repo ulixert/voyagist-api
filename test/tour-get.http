@@ -1,5 +1,19 @@
+### login
+POST {{api}}/users/login
+Content-Type: application/json
+
+{
+  "email": "alice@gmail.com",
+  "password": "12345678"
+}
+
+> {%
+  client.global.set("auth_token", response.body.token);
+%}
+
 ### Get all tours
 GET {{api}}/tours
+Authorization: Bearer {{auth_token}}
 
 ### Get a tour
 GET {{api}}/tours/100
@@ -11,7 +25,10 @@ GET {{api}}/tours?duration=djs&difficulty=easy
 GET {{api}}/tours?duration[gte]=9&difficulty=EASY
 
 ### Get tours with sorting
-GET {{api}}/tours?sort=price,-ratingsAverage
+#GET {{api}}/tours?sort=price,-ratingsAverage&sort=name
+GET {{api}}/tours?duration[gte]=5&duration[lte]=9
+Authorization: Bearer {{auth_token}}
+
 
 ### Get tours with selected fields
 GET {{api}}/tours?fields=id,name,price,createdAt
@@ -31,3 +48,5 @@ GET {{api}}/tours/monthly-plan/2021
 
 ### Get wrong route
 GET {{api}}/wrong-route
+
+

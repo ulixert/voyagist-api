@@ -9,7 +9,7 @@ import {
   NotFoundError,
   UnauthorizedError,
 } from '@/errors/errors.js';
-import { generateToken } from '@/features/auth/utils/generateToken.js';
+import { generateTokenAndSetCookie } from '@/features/auth/utils/generateTokenAndSetCookie.js';
 import { prepareUserResponse } from '@/features/user/utils/prepareUserResponse.js';
 import { sendPasswordResetEmail } from '@/utils/email.js';
 import {
@@ -44,7 +44,7 @@ export async function signup(req: Request, res: Response, next: NextFunction) {
       },
     });
 
-    const token = generateToken(user.id);
+    const token = generateTokenAndSetCookie(res, user.id);
     res.status(HttpStatusCode.CREATED).json({
       status: 'success',
       token,
@@ -67,7 +67,7 @@ export async function login(req: Request, res: Response, next: NextFunction) {
       throw new UnauthorizedError(UserMessage.AUTHENTICATION_ERROR);
     }
 
-    const token = generateToken(user.id);
+    const token = generateTokenAndSetCookie(res, user.id);
     res.status(HttpStatusCode.OK).json({
       status: 'success',
       token,
@@ -155,7 +155,7 @@ export async function resetPassword(
       },
     });
 
-    const token = generateToken(user.id);
+    const token = generateTokenAndSetCookie(res, user.id);
     res.status(HttpStatusCode.OK).json({
       status: 'success',
       token,
@@ -194,7 +194,7 @@ export async function updatePassword(
       },
     });
 
-    const token = generateToken(user.id);
+    const token = generateTokenAndSetCookie(res, user.id);
     res.status(HttpStatusCode.OK).json({
       status: 'success',
       token,
